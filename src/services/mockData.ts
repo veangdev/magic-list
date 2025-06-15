@@ -140,6 +140,45 @@ export function generateMockData() {
       estimatedHours: 20,
     },
   ];
+  const subscriptionPlans = [
+  {
+    id: 'free',
+    title: 'Free Plan – Get Started',
+    description: 'Perfect for individuals or small teams just getting started. Create tasks, organize your to-dos, and stay focused — all for free.',
+    features: [
+      'Up to 3 projects',
+      'Basic task management',
+      'Personal dashboard',
+    ],
+    price: 0,
+  },
+  {
+    id: 'pro',
+    title: 'Pro Plan – Boost Productivity',
+    description: 'For growing teams and power users. Unlock collaboration tools, deadlines, recurring tasks, and enhanced reminders to manage work efficiently.',
+    features: [
+      'Unlimited projects',
+      'Team collaboration',
+      'Deadline & reminder features',
+      'File attachments',
+    ],
+    price: 29,
+  },
+  {
+    id: 'team',
+    title: 'Team Plan – Collaborate at Scale',
+    description: 'Built for teams and organizations. Get priority support, advanced permissions, and full access to productivity and reporting tools.',
+    features: [
+      'All Pro features',
+      'Team roles & permissions',
+      'Activity logs',
+      'Priority support',
+      'Advanced reporting',
+    ],
+    price: 59,
+  },
+]
 
-  return { tasks, projects };
+
+  return { tasks, projects, subscriptionPlans };
 }
