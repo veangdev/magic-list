@@ -10,7 +10,7 @@ import { useTasks } from './hooks/useTasks';
 import { useAuth } from './hooks/useAuth';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Task, TaskStatus } from './types';
-
+import {Subscribe} from './components/subscribe/Subscribe';
 function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [isDarkMode, setIsDarkMode] = useLocalStorage('darkMode', false);
@@ -229,6 +229,10 @@ function App() {
               </div>
             </div>
           </div>
+        );
+      case 'subscribe':
+        return (
+          <Subscribe/>
         );
       default:
         return (

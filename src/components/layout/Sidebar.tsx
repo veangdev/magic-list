@@ -11,7 +11,8 @@ import {
   Folder,
   Award,
   Target,
-  Lock
+  Lock,
+  CalendarCheck
 } from 'lucide-react';
 import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
@@ -43,6 +44,7 @@ export function Sidebar({
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'team', label: 'Team', icon: Users },
+    { id: 'subscribe', label: 'Upgrade Pro', icon: CalendarCheck },
   ];
 
   return (
@@ -78,7 +80,7 @@ export function Sidebar({
       )}
 
       {/* New Task Button */}
-      <div className="px-4 mb-6">
+      <div className="px-4 mb-6 mt-2">
         <Button 
           onClick={onNewTask}
           className="w-full justify-center"
