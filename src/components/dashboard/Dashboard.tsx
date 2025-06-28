@@ -10,6 +10,7 @@ interface DashboardProps {
   onTaskClick: (task: Task) => void;
   userPoints: number;
   userStreak: number;
+  onDeleteTask: (id: string) => void;
 }
 
 export function Dashboard({
@@ -18,6 +19,7 @@ export function Dashboard({
   onTaskClick,
   userPoints,
   userStreak,
+  onDeleteTask,
 }: DashboardProps) {
   const completedTasks = tasks.filter(
     (task) => task.status === "completed"
@@ -83,6 +85,7 @@ export function Dashboard({
             tasks={tasks}
             onTaskClick={onTaskClick}
             onRefresh={() => window.location.reload()}
+            onDeleteTask={onDeleteTask}
           />
         </div>
 

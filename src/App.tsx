@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Task, TaskStatus } from "./types";
 import { useTasks } from "./hooks/useTasks";
 import { useAuth } from "./hooks/useAuth"; // Import useAuth hook
@@ -10,6 +10,7 @@ import { useLocalStorage } from "./hooks/useLocalStorage";
 import { KanbanBoard } from "./components/task/KanbanBoard";
 import { Dashboard } from "./components/dashboard/Dashboard";
 import { AuthModal } from "./components/auth/AuthModal";
+import { ConfirmDeletePopup } from "./components/task/ConfirmDeletePopup";
 
 function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,6 +20,10 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [newTaskStatus, setNewTaskStatus] = useState<TaskStatus>("todo");
   const [isDarkMode, setIsDarkMode] = useLocalStorage("darkMode", false);
+  const [currentTask, setCurrentTask] = useState({
+    open: false,
+    id: "",
+  });
 
   const {
     tasks,
@@ -28,6 +33,7 @@ function App() {
     createTask,
     updateTask,
     moveTask,
+    deleteTask,
   } = useTasks();
 
   const { user, isAuthenticated, loading: authLoading, logout } = useAuth();
@@ -95,6 +101,17 @@ function App() {
     setIsAuthModalOpen(false);
   };
 
+  const handleOpenToDelete = useCallback((id: string) => {
+    setCurrentTask({ id, open: true });
+  }, []);
+
+  const handleDeleteTask = useCallback(() => {
+    console.log("data: ");
+    
+    deleteTask(currentTask.id);
+    setCurrentTask({ id: "", open: false });
+  }, [deleteTask, currentTask.id]);
+
   const filteredTasks = tasks.filter(
     (task) =>
       searchQuery === "" ||
@@ -139,6 +156,7 @@ function App() {
             onTaskClick={handleEditTask}
             userPoints={user?.points || 0}
             userStreak={user?.streak || 0}
+            onDeleteTask={(id) => handleOpenToDelete(id)}
           />
         );
       case "tasks":
@@ -157,6 +175,7 @@ function App() {
               onMoveTask={moveTask}
               onTaskClick={handleEditTask}
               onNewTask={handleNewTask}
+              onDeleteTask={(id) => handleOpenToDelete(id)}
             />
           </div>
         );
@@ -220,6 +239,7 @@ function App() {
             onTaskClick={handleEditTask}
             userPoints={user?.points || 0}
             userStreak={user?.streak || 0}
+            onDeleteTask={(id) => handleOpenToDelete(id)}
           />
         );
     }
@@ -264,6 +284,18 @@ function App() {
       </Modal>
 
       <AuthModal isOpen={isAuthModalOpen} onClose={handleAuthModalClose} />
+
+      <ConfirmDeletePopup
+        isOpen={currentTask.open}
+        onClose={() =>
+          setCurrentTask({
+            open: false,
+            id: "",
+          })
+        }
+        onConfirm={handleDeleteTask}
+        taskTitle={"task.title"}
+      />
     </div>
   );
 }

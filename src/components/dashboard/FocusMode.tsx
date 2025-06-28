@@ -1,14 +1,19 @@
 import { Task } from "../../types";
 import { TaskCard } from "../task/TaskCard";
 import { Button } from "../common/Button";
-
 interface FocusModeProps {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
   onRefresh: () => void;
+  onDeleteTask: (id: string) => void;
 }
 
-export function FocusMode({ tasks, onTaskClick, onRefresh }: FocusModeProps) {
+export function FocusMode({
+  tasks,
+  onTaskClick,
+  onRefresh,
+  onDeleteTask,
+}: FocusModeProps) {
   // AI-driven prioritization (simplified algorithm)
   const prioritizeTasks = (tasks: Task[]): Task[] => {
     const now = new Date();
@@ -82,6 +87,7 @@ export function FocusMode({ tasks, onTaskClick, onRefresh }: FocusModeProps) {
                   task={task}
                   onClick={() => onTaskClick(task)}
                   onEdit={() => onTaskClick(task)}
+                  onDelete={() => onDeleteTask(task.id)}
                 />
               </div>
             </div>
