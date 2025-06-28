@@ -1,7 +1,14 @@
-import { CheckSquare, Clock, Users, TrendingUp, Award, Target } from 'lucide-react';
-import { Task, Project } from '../../types';
-import { StatsCard } from './StatsCard';
-import { FocusMode } from './FocusMode';
+import {
+  CheckSquare,
+  Clock,
+  Users,
+  TrendingUp,
+  Award,
+} from "lucide-react";
+
+import { StatsCard } from "./StatsCard";
+import { FocusMode } from "./FocusMode";
+import { Task, Project } from "../../types";
 
 interface DashboardProps {
   tasks: Task[];
@@ -11,16 +18,22 @@ interface DashboardProps {
   userStreak: number;
 }
 
-export function Dashboard({ tasks, projects, onTaskClick, userPoints, userStreak }: DashboardProps) {
-  const completedTasks = tasks.filter(task => task.status === 'completed').length;
-  const activeTasks = tasks.filter(task => task.status !== 'completed').length;
-  const overdueTasks = tasks.filter(task => 
-    task.dueDate && 
-    new Date(task.dueDate) < new Date() && 
-    task.status !== 'completed'
+export function Dashboard({
+  tasks,
+  projects,
+  onTaskClick,
+  userPoints,
+  userStreak,
+}: DashboardProps) {
+  const completedTasks = tasks.filter(
+    (task) => task.status === "completed"
+  ).length;
+  const activeTasks = tasks.filter(
+    (task) => task.status !== "completed"
   ).length;
 
-  const completionRate = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
+  const completionRate =
+    tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
 
   return (
     <div className="space-y-6">
@@ -29,7 +42,10 @@ export function Dashboard({ tasks, projects, onTaskClick, userPoints, userStreak
         <h1 className="text-2xl font-bold mb-2">Welcome back! 👋</h1>
         <p className="text-primary-100">
           {activeTasks > 0 ? (
-            <>You have {activeTasks} active tasks{userStreak > 0 && ` and you're on a ${userStreak}-day streak!`}</>
+            <>
+              You have {activeTasks} active tasks
+              {userStreak > 0 && ` and you're on a ${userStreak}-day streak!`}
+            </>
           ) : (
             "All caught up! Great work on staying productive."
           )}
@@ -42,7 +58,7 @@ export function Dashboard({ tasks, projects, onTaskClick, userPoints, userStreak
           title="Completed Tasks"
           value={completedTasks}
           icon={<CheckSquare className="w-6 h-6" />}
-          trend={{ value: 12, label: 'from last week' }}
+          trend={{ value: 12, label: "from last week" }}
           color="success"
         />
         <StatsCard
@@ -61,7 +77,7 @@ export function Dashboard({ tasks, projects, onTaskClick, userPoints, userStreak
           title="Completion Rate"
           value={`${completionRate}%`}
           icon={<TrendingUp className="w-6 h-6" />}
-          trend={{ value: 5, label: 'improvement' }}
+          trend={{ value: 5, label: "improvement" }}
           color="success"
         />
       </div>
@@ -75,7 +91,7 @@ export function Dashboard({ tasks, projects, onTaskClick, userPoints, userStreak
             onRefresh={() => window.location.reload()}
           />
         </div>
-        
+
         <div className="space-y-6">
           {/* Gamification Stats */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -94,16 +110,20 @@ export function Dashboard({ tasks, projects, onTaskClick, userPoints, userStreak
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-primary-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min((userPoints % 1000) / 10, 100)}%` }}
+                    style={{
+                      width: `${Math.min((userPoints % 1000) / 10, 100)}%`,
+                    }}
                   />
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {userPoints > 0 ? `${1000 - (userPoints % 1000)} points to next level` : 'Complete tasks to earn points!'}
+                  {userPoints > 0
+                    ? `${1000 - (userPoints % 1000)} points to next level`
+                    : "Complete tasks to earn points!"}
                 </p>
               </div>
-              
+
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -116,53 +136,6 @@ export function Dashboard({ tasks, projects, onTaskClick, userPoints, userStreak
               </div>
             </div>
           </div>
-
-          {/* Quick Actions */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Quick Actions
-            </h3>
-            <div className="space-y-2">
-              <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                Create new project
-              </button>
-              <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                Invite team member
-              </button>
-              <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                View analytics
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Projects */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Recent Projects
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.slice(0, 3).map(project => (
-            <div key={project.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer">
-              <div className="flex items-center mb-3">
-                <div 
-                  className="w-3 h-3 rounded-full mr-3"
-                  style={{ backgroundColor: project.color }}
-                />
-                <h4 className="font-medium text-gray-900 dark:text-white">
-                  {project.name}
-                </h4>
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                {project.description}
-              </p>
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>{project.members.length} members</span>
-                <span>{tasks.filter(t => t.projectId === project.id).length} tasks</span>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>

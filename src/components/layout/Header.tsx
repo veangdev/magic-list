@@ -1,7 +1,9 @@
-import { Search, Bell, Sun, Moon, User, LogOut } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '../common/Button';
-import { Badge } from '../common/Badge';
+import React from "react";
+import { isEmpty } from "lodash";
+import { Search, Bell, Sun, Moon, User, LogOut } from "lucide-react";
+
+import { Badge } from "../common/Badge";
+import { Button } from "../common/Button";
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -12,21 +14,31 @@ interface HeaderProps {
     name: string;
     email: string;
     avatar?: string;
-  } | null;
+  };
   onLogin: () => void;
   onLogout: () => void;
 }
 
-export function Header({ 
-  isDarkMode, 
-  onToggleTheme, 
-  onSearch, 
-  notifications, 
-  user,
+const DEFAULT_USER = {
+  name: "Veang Kroh",
+  email: "veangkroh@gmail.com",
+  avatar: undefined,
+};
+
+export function Header({
+  isDarkMode,
+  onToggleTheme,
+  onSearch,
+  notifications,
+  user = DEFAULT_USER,
   onLogin,
-  onLogout 
+  onLogout,
 }: HeaderProps) {
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = React.useState(false);
+
+  const userInfo: HeaderProps["user"] = React.useMemo(() => {
+    return isEmpty(user) ? DEFAULT_USER : user;
+  }, [user]);
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
@@ -53,26 +65,27 @@ export function Header({
             onClick={onToggleTheme}
             className="p-2"
           >
-            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {isDarkMode ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+            user
           </Button>
 
-          {user ? (
-            <>
+          {userInfo ? (
+            <React.Fragment>
               {/* Notifications */}
               <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-2"
-                >
+                <Button variant="ghost" size="sm" className="p-2">
                   <Bell className="w-5 h-5" />
                 </Button>
                 {notifications > 0 && (
-                  <Badge 
-                    variant="error" 
+                  <Badge
+                    variant="error"
                     className="absolute -top-1 -right-1 px-1.5 py-0.5 text-xs min-w-[1.25rem] h-5 flex items-center justify-center"
                   >
-                    {notifications > 9 ? '9+' : notifications}
+                    {notifications > 9 ? "9+" : notifications}
                   </Badge>
                 )}
               </div>
@@ -84,15 +97,23 @@ export function Header({
                   className="flex items-center space-x-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg p-2 transition-colors"
                 >
                   <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
+                    {userInfo.avatar ? (
+                      <img
+                        src={userInfo.avatar}
+                        alt={userInfo.name}
+                        className="w-8 h-8 rounded-full"
+                      />
                     ) : (
                       <User className="w-5 h-5 text-white" />
                     )}
                   </div>
                   <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {userInfo.name}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {userInfo.email}
+                    </p>
                   </div>
                 </button>
 
@@ -100,8 +121,12 @@ export function Header({
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                     <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {userInfo.name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {userInfo.email}
+                      </p>
                     </div>
                     <button
                       onClick={() => {
@@ -116,7 +141,7 @@ export function Header({
                   </div>
                 )}
               </div>
-            </>
+            </React.Fragment>
           ) : (
             <Button onClick={onLogin} size="sm">
               Sign In
@@ -127,8 +152,8 @@ export function Header({
 
       {/* Click outside to close user menu */}
       {showUserMenu && (
-        <div 
-          className="fixed inset-0 z-40" 
+        <div
+          className="fixed inset-0 z-40"
           onClick={() => setShowUserMenu(false)}
         />
       )}
