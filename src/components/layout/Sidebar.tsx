@@ -55,7 +55,7 @@ export function Sidebar({
 
       {/* User Stats - Only show if authenticated */}
       {isAuthenticated && (
-        <div className="p-4 bg-gradient-to-r from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 m-4 rounded-lg">
+        <div className="p-4 bg-gradient-to-r from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 m-4 rounded-lg hidden">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Points
@@ -77,7 +77,7 @@ export function Sidebar({
       )}
 
       {/* New Task Button */}
-      <div className="px-4 mb-6 mt-2">
+      <div className="px-4 mb-6 mt-4">
         <Button onClick={onNewTask} className="w-full justify-center" size="md">
           <Plus className="w-4 h-4 mr-2" />
           New Task
