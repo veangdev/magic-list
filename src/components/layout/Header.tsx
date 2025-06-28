@@ -19,25 +19,19 @@ interface HeaderProps {
   onLogout: () => void;
 }
 
-const DEFAULT_USER = {
-  name: "Veang Kroh",
-  email: "veangkroh@gmail.com",
-  avatar: undefined,
-};
-
 export function Header({
   isDarkMode,
   onToggleTheme,
   onSearch,
   notifications,
-  user = DEFAULT_USER,
+  user,
   onLogin,
   onLogout,
 }: HeaderProps) {
   const [showUserMenu, setShowUserMenu] = React.useState(false);
 
   const userInfo: HeaderProps["user"] = React.useMemo(() => {
-    return isEmpty(user) ? DEFAULT_USER : user;
+    return isEmpty(user) ? undefined : user;
   }, [user]);
 
   return (
@@ -75,7 +69,7 @@ export function Header({
           {userInfo ? (
             <React.Fragment>
               {/* Notifications */}
-              <div className="relative">
+              <div className="relative hidden">
                 <Button variant="ghost" size="sm" className="p-2">
                   <Bell className="w-5 h-5" />
                 </Button>

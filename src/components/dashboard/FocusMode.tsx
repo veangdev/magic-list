@@ -1,6 +1,6 @@
-import { Task } from '../../types';
-import { TaskCard } from '../task/TaskCard';
-import { Button } from '../common/Button';
+import { Task } from "../../types";
+import { TaskCard } from "../task/TaskCard";
+import { Button } from "../common/Button";
 
 interface FocusModeProps {
   tasks: Task[];
@@ -12,29 +12,34 @@ export function FocusMode({ tasks, onTaskClick, onRefresh }: FocusModeProps) {
   // AI-driven prioritization (simplified algorithm)
   const prioritizeTasks = (tasks: Task[]): Task[] => {
     const now = new Date();
-    
+
     return tasks
-      .filter(task => task.status !== 'completed')
-      .map(task => {
+      .filter((task) => task.status !== "completed")
+      .map((task) => {
         let score = 0;
-        
+
         // Priority weight
         const priorityWeights = { low: 1, medium: 2, high: 3, urgent: 4 };
         score += priorityWeights[task.priority] * 25;
-        
+
         // Due date urgency
         if (task.dueDate) {
-          const daysUntilDue = Math.ceil((new Date(task.dueDate).getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          const daysUntilDue = Math.ceil(
+            (new Date(task.dueDate).getTime() - now.getTime()) /
+              (1000 * 60 * 60 * 24)
+          );
           if (daysUntilDue < 0) score += 100; // Overdue
           else if (daysUntilDue <= 1) score += 75; // Due today/tomorrow
           else if (daysUntilDue <= 3) score += 50; // Due this week
           else if (daysUntilDue <= 7) score += 25; // Due next week
         }
-        
+
         // Incomplete subtasks penalty
-        const incompleteTasks = task.subtasks.filter(st => !st.completed).length;
+        const incompleteTasks = task.subtasks.filter(
+          (st) => !st.completed
+        ).length;
         if (incompleteTasks > 0) score += incompleteTasks * 10;
-        
+
         return { ...task, aiScore: score };
       })
       .sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0))

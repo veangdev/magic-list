@@ -1,4 +1,4 @@
-import { Task, Project, User, TaskStatus, TaskPriority } from '../types';
+import { Task, Project } from '../types';
 
 export function generateMockData() {
   const projects: Project[] = [

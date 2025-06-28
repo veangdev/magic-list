@@ -1,10 +1,4 @@
-import {
-  CheckSquare,
-  Clock,
-  Users,
-  TrendingUp,
-  Award,
-} from "lucide-react";
+import { CheckSquare, Clock, Users, TrendingUp, Award } from "lucide-react";
 
 import { StatsCard } from "./StatsCard";
 import { FocusMode } from "./FocusMode";
@@ -84,7 +78,7 @@ export function Dashboard({
 
       {/* Focus Mode and Quick Stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-6">
           <FocusMode
             tasks={tasks}
             onTaskClick={onTaskClick}
@@ -92,7 +86,7 @@ export function Dashboard({
           />
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 hidden">
           {/* Gamification Stats */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">

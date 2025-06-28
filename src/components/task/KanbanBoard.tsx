@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+
 import { Plus } from 'lucide-react';
-import { Task, TaskStatus } from '../../types';
 import { TaskCard } from './TaskCard';
-import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
+import { Button } from '../common/Button';
+import { Task, TaskStatus } from '../../types';
 
 interface KanbanBoardProps {
   tasks: Task[];
@@ -27,8 +28,8 @@ export function KanbanBoard({ tasks, onMoveTask, onTaskClick, onNewTask }: Kanba
     return tasks.filter(task => task.status === status);
   };
 
-  const handleDragStart = (result: any) => {
-    setDraggedTask(result.draggableId);
+  const handleDragStart = (start: import('react-beautiful-dnd').DragStart) => {
+    setDraggedTask(start.draggableId);
   };
 
   const handleDragEnd = (result: DropResult) => {

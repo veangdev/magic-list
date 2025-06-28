@@ -1,56 +1,52 @@
-import { useState, useEffect } from 'react';
-import { Sidebar } from './components/layout/Sidebar';
-import { Header } from './components/layout/Header';
-import { Dashboard } from './components/dashboard/Dashboard';
-import { KanbanBoard } from './components/task/KanbanBoard';
-import { TaskForm } from './components/task/TaskForm';
-import { AuthModal } from './components/auth/AuthModal';
-import { Modal } from './components/common/Modal';
-import { useTasks } from './hooks/useTasks';
-import { useAuth } from './hooks/useAuth';
-import { useLocalStorage } from './hooks/useLocalStorage';
-import { Task, TaskStatus } from './types';
-import {Subscribe} from './components/subscribe/Subscribe';
+import { useState, useEffect } from "react";
+import { Task, TaskStatus } from "./types";
+import { useTasks } from "./hooks/useTasks";
+import { useAuth } from "./hooks/useAuth"; // Import useAuth hook
+import { Modal } from "./components/common/Modal";
+import { Header } from "./components/layout/Header";
+import { Sidebar } from "./components/layout/Sidebar";
+import { TaskForm } from "./components/task/TaskForm";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { KanbanBoard } from "./components/task/KanbanBoard";
+import { Dashboard } from "./components/dashboard/Dashboard";
+import { AuthModal } from "./components/auth/AuthModal";
+
 function App() {
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [isDarkMode, setIsDarkMode] = useLocalStorage('darkMode', false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [currentView, setCurrentView] = useState("dashboard");
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [newTaskStatus, setNewTaskStatus] = useState<TaskStatus>('todo');
+  const [newTaskStatus, setNewTaskStatus] = useState<TaskStatus>("todo");
+  const [isDarkMode, setIsDarkMode] = useLocalStorage("darkMode", false);
 
-  const { user, isAuthenticated, loading: authLoading, logout } = useAuth();
   const {
     tasks,
     projects,
-    loading,
-    error,
+    loading: tasksLoading,
+    error: tasksError,
     createTask,
     updateTask,
-    deleteTask,
     moveTask,
   } = useTasks();
+
+  const { user, isAuthenticated, loading: authLoading, logout } = useAuth();
 
   // Apply dark mode
   useEffect(() => {
     if (isDarkMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   }, [isDarkMode]);
 
-  // Show auth modal if not authenticated
+  // Show auth modal if not authenticated on initial load
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       setIsAuthModalOpen(true);
     }
   }, [authLoading, isAuthenticated]);
-
-  const handleAuthSuccess = (userData: any) => {
-    setIsAuthModalOpen(false);
-  };
 
   const handleLogin = () => {
     setIsAuthModalOpen(true);
@@ -61,7 +57,7 @@ function App() {
     setIsAuthModalOpen(true);
   };
 
-  const handleNewTask = (status: TaskStatus = 'todo') => {
+  const handleNewTask = (status: TaskStatus = "todo") => {
     if (!isAuthenticated) {
       setIsAuthModalOpen(true);
       return;
@@ -95,27 +91,22 @@ function App() {
     setEditingTask(null);
   };
 
-  const filteredTasks = tasks.filter(task => 
-    searchQuery === '' || 
-    task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    task.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+  const handleAuthModalClose = () => {
+    setIsAuthModalOpen(false);
+  };
+
+  const filteredTasks = tasks.filter(
+    (task) =>
+      searchQuery === "" ||
+      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.tags.some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase())
+      )
   );
 
-  // Show loading screen while checking authentication
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading TaskSphere...</p>
-        </div>
-      </div>
-    );
-  }
-
   const renderContent = () => {
-    if (loading) {
+    if (authLoading || tasksLoading) {
       return (
         <div className="flex items-center justify-center h-full">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
@@ -123,12 +114,12 @@ function App() {
       );
     }
 
-    if (error) {
+    if (tasksError) {
       return (
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
-            <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
-            <button 
+            <p className="text-red-600 dark:text-red-400 mb-4">{tasksError}</p>
+            <button
               onClick={() => window.location.reload()}
               className="text-primary-600 hover:text-primary-700"
             >
@@ -140,7 +131,7 @@ function App() {
     }
 
     switch (currentView) {
-      case 'dashboard':
+      case "dashboard":
         return (
           <Dashboard
             tasks={filteredTasks}
@@ -150,7 +141,7 @@ function App() {
             userStreak={user?.streak || 0}
           />
         );
-      case 'tasks':
+      case "tasks":
         return (
           <div>
             <div className="mb-6">
@@ -169,29 +160,7 @@ function App() {
             />
           </div>
         );
-      case 'calendar':
-        return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Calendar View
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Calendar view coming soon! 📅
-            </p>
-          </div>
-        );
-      case 'team':
-        return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Team Management
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Team collaboration features coming soon! 👥
-            </p>
-          </div>
-        );
-      case 'settings':
+      case "settings":
         return (
           <div className="max-w-2xl">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
@@ -207,9 +176,9 @@ function App() {
                     <button
                       onClick={() => setIsDarkMode(false)}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        !isDarkMode 
-                          ? 'bg-primary-600 text-white' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                        !isDarkMode
+                          ? "bg-primary-600 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                       }`}
                     >
                       Light Mode
@@ -217,22 +186,31 @@ function App() {
                     <button
                       onClick={() => setIsDarkMode(true)}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        isDarkMode 
-                          ? 'bg-primary-600 text-white' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                        isDarkMode
+                          ? "bg-primary-600 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                       }`}
                     >
                       Dark Mode
                     </button>
                   </div>
                 </div>
+                {isAuthenticated && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      Account
+                    </label>
+                    <button
+                      onClick={handleLogout}
+                      className="px-4 py-2 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700"
+                    >
+                      Log Out
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        );
-      case 'subscribe':
-        return (
-          <Subscribe/>
         );
       default:
         return (
@@ -249,9 +227,7 @@ function App() {
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar */}
       <Sidebar
-        projects={projects}
         currentView={currentView}
         onViewChange={setCurrentView}
         onNewTask={() => handleNewTask()}
@@ -260,45 +236,34 @@ function App() {
         isAuthenticated={isAuthenticated}
       />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header
           isDarkMode={isDarkMode}
           onToggleTheme={() => setIsDarkMode(!isDarkMode)}
           onSearch={setSearchQuery}
-          notifications={2}
-          user={user}
+          notifications={0}
+          user={isAuthenticated ? user || undefined : undefined}
           onLogin={handleLogin}
           onLogout={handleLogout}
         />
-        
-        <main className="flex-1 overflow-y-auto p-6">
-          {renderContent()}
-        </main>
+
+        <main className="flex-1 overflow-y-auto p-6">{renderContent()}</main>
       </div>
 
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onAuthSuccess={handleAuthSuccess}
-      />
+      <Modal
+        isOpen={isTaskFormOpen}
+        onClose={handleCloseTaskForm}
+        title={editingTask ? "Edit Task" : "Create New Task"}
+        size="lg"
+      >
+        <TaskForm
+          task={editingTask || undefined}
+          onSave={handleSaveTask}
+          onCancel={handleCloseTaskForm}
+        />
+      </Modal>
 
-      {/* Task Form Modal */}
-      {isAuthenticated && (
-        <Modal
-          isOpen={isTaskFormOpen}
-          onClose={handleCloseTaskForm}
-          title={editingTask ? 'Edit Task' : 'Create New Task'}
-          size="lg"
-        >
-          <TaskForm
-            task={editingTask || undefined}
-            onSave={handleSaveTask}
-            onCancel={handleCloseTaskForm}
-          />
-        </Modal>
-      )}
+      <AuthModal isOpen={isAuthModalOpen} onClose={handleAuthModalClose} />
     </div>
   );
 }
