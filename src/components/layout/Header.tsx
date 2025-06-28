@@ -70,7 +70,6 @@ export function Header({
             ) : (
               <Moon className="w-5 h-5" />
             )}
-            user
           </Button>
 
           {userInfo ? (
