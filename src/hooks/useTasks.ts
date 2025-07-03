@@ -20,10 +20,6 @@ export function useTasks() {
           const mockData = generateMockData();
           setTasks(mockData.tasks);
           setProjects(mockData.projects);
-        } else {
-          console.log(
-            "useTasks: Using existing tasks/projects from localStorage"
-          );
         }
       } catch (error) {
         console.error("useTasks: Error loading data:", error);
@@ -56,10 +52,8 @@ export function useTasks() {
         ...taskData,
       };
 
-      console.log("useTasks: Creating task:", newTask);
       setTasks((prev) => {
         const updatedTasks = [...prev, newTask];
-        console.log("useTasks: Updated tasks:", updatedTasks);
         return updatedTasks;
       });
     },
@@ -68,19 +62,12 @@ export function useTasks() {
 
   const updateTask = useCallback(
     (taskId: string, updates: Partial<Task>) => {
-      console.log(
-        "useTasks: Updating task ID:",
-        taskId,
-        "with updates:",
-        updates
-      );
       setTasks((prev) => {
         const updatedTasks = prev.map((task) =>
           task.id === taskId
             ? { ...task, ...updates, updatedAt: new Date() }
             : task
         );
-        console.log("useTasks: Updated tasks:", updatedTasks);
         return updatedTasks;
       });
     },
@@ -89,10 +76,8 @@ export function useTasks() {
 
   const deleteTask = useCallback(
     (taskId: string) => {
-      console.log("useTasks: Deleting task ID:", taskId);
       setTasks((prev) => {
         const updatedTasks = prev.filter((task) => task.id !== taskId);
-        console.log("useTasks: Updated tasks:", updatedTasks);
         return updatedTasks;
       });
     },
@@ -101,7 +86,6 @@ export function useTasks() {
 
   const moveTask = useCallback(
     (taskId: string, newStatus: TaskStatus) => {
-      console.log("useTasks: Moving task ID:", taskId, "to status:", newStatus);
       updateTask(taskId, { status: newStatus });
     },
     [updateTask]
@@ -110,12 +94,6 @@ export function useTasks() {
   const getTasksByStatus = useCallback(
     (status: TaskStatus) => {
       const filteredTasks = tasks.filter((task) => task.status === status);
-      console.log(
-        "useTasks: Getting tasks by status:",
-        status,
-        "result:",
-        filteredTasks
-      );
       return filteredTasks;
     },
     [tasks]
@@ -125,12 +103,6 @@ export function useTasks() {
     (projectId: string) => {
       const filteredTasks = tasks.filter(
         (task) => task.projectId === projectId
-      );
-      console.log(
-        "useTasks: Getting tasks by project ID:",
-        projectId,
-        "result:",
-        filteredTasks
       );
       return filteredTasks;
     },

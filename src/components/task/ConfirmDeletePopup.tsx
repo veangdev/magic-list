@@ -16,13 +16,11 @@ export function ConfirmDeletePopup({
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    console.log("ConfirmDeletePopup: Confirmed deletion for task:", taskTitle);
     onConfirm();
     // onClose();
   };
 
   const handleClose = () => {
-    console.log("ConfirmDeletePopup: Cancelled deletion for task:", taskTitle);
     onClose();
   };
 

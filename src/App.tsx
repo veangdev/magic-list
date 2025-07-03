@@ -106,8 +106,6 @@ function App() {
   }, []);
 
   const handleDeleteTask = useCallback(() => {
-    console.log("data: ");
-    
     deleteTask(currentTask.id);
     setCurrentTask({ id: "", open: false });
   }, [deleteTask, currentTask.id]);

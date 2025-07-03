@@ -73,8 +73,6 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     if (!validateForm()) return;
 
     setError("");
-    console.log("formData: ", formData);
-
     try {
       if (mode === "reset") {
         const result = await resetPassword(formData.email);

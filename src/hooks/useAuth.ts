@@ -121,16 +121,13 @@ export function useAuth() {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log("useAuth: Login attempt with email:", email);
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Check localStorage for existing user
       const storedUser =
         typeof window !== "undefined" ? localStorage.getItem("user") : null;
-      console.log("useAuth: Stored user from localStorage:", storedUser);
 
       if (!storedUser) {
-        console.log("useAuth: No user found in localStorage");
         return { success: false, error: "User not found" };
       }
 
@@ -143,12 +140,6 @@ export function useAuth() {
       }
 
       if (existingUser.email !== email) {
-        console.log(
-          "useAuth: Email mismatch, expected:",
-          existingUser.email,
-          "got:",
-          email
-        );
         return { success: false, error: "User not found" };
       }
 
@@ -156,33 +147,15 @@ export function useAuth() {
         !existingUser.hashedPassword ||
         !(await verifyPassword(password, existingUser.hashedPassword))
       ) {
-        console.log("useAuth: Invalid password for email:", email);
         return { success: false, error: "Invalid password" };
       }
 
       const userData: User = { ...existingUser };
       const newSessionToken = generateSessionToken();
 
-      console.log("useAuth: Setting user during login:", userData);
       setUser(userData);
-      console.log(
-        "useAuth: Setting sessionToken during login:",
-        newSessionToken
-      );
       setSessionToken(newSessionToken);
       setIsAuthenticated(true);
-
-      // Verify storage
-      if (typeof window !== "undefined") {
-        console.log(
-          "useAuth: After login, stored user:",
-          localStorage.getItem("user")
-        );
-        console.log(
-          "useAuth: After login, stored sessionToken:",
-          localStorage.getItem("sessionToken")
-        );
-      }
 
       return { success: true, token: newSessionToken.token };
     } catch (error) {
@@ -193,7 +166,6 @@ export function useAuth() {
 
   const signup = async (name: string, email: string, password: string) => {
     try {
-      console.log("useAuth: Signup attempt with email:", email, "name:", name);
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Check if user already exists in localStorage
@@ -204,7 +176,6 @@ export function useAuth() {
         try {
           existingUser = JSON.parse(storedUser);
           if (existingUser.email === email) {
-            console.log("useAuth: User already exists with email:", email);
             return { success: false, error: "Email already registered" };
           }
         } catch (error) {
@@ -226,26 +197,9 @@ export function useAuth() {
       };
       const newSessionToken = generateSessionToken();
 
-      console.log("useAuth: Setting user during signup:", userData);
       setUser(userData);
-      console.log(
-        "useAuth: Setting sessionToken during signup:",
-        newSessionToken
-      );
       setSessionToken(newSessionToken);
       setIsAuthenticated(true);
-
-      // Verify storage
-      if (typeof window !== "undefined") {
-        console.log(
-          "useAuth: After signup, stored user:",
-          localStorage.getItem("user")
-        );
-        console.log(
-          "useAuth: After signup, stored sessionToken:",
-          localStorage.getItem("sessionToken")
-        );
-      }
 
       return { success: true, token: newSessionToken.token };
     } catch (error) {
@@ -255,22 +209,12 @@ export function useAuth() {
   };
 
   const logout = () => {
-    console.log("useAuth: Logging out, clearing sessionToken only");
     setSessionToken(null);
     setIsAuthenticated(false);
-    console.log(
-      "useAuth: After logout, user remains:",
-      localStorage.getItem("user")
-    );
-    console.log(
-      "useAuth: After logout, sessionToken:",
-      localStorage.getItem("sessionToken")
-    );
   };
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = async () => {
     try {
-      console.log("useAuth: Reset password attempt for email:", email);
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return { success: true };
     } catch (error) {

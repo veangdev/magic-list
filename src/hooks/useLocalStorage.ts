@@ -29,9 +29,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {
       if (!isBrowser) {
-        console.warn(
-          `Cannot set localStorage key "${key}": localStorage not available`
-        );
         return;
       }
 
@@ -53,7 +50,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
         setStoredValue(valueToStore);
         localStorage.setItem(key, JSON.stringify(valueToStore));
-        console.log(`Stored in localStorage for key "${key}":`, valueToStore);
 
         // Dispatch a storage event to sync across tabs
         const storageEvent = new StorageEvent("storage", {
@@ -83,7 +79,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
       try {
         const newValue = JSON.parse(event.newValue);
-        console.log(`Storage event detected for key "${key}":`, newValue);
         setStoredValue(newValue);
       } catch (error) {
         console.error(`Error parsing storage event for key "${key}":`, error);
